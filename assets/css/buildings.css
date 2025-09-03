@@ -1,0 +1,188 @@
+/* assets/css/buildings.css - Stili specifici per la pagina di gestione edifici */
+
+/* Griglia degli edifici - Layout ottimizzato */
+.buildings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg, 1.5rem);
+    margin-top: var(--spacing-md, 1rem);
+    padding: var(--spacing-md, 1rem) 0;
+}
+
+/* Card singolo edificio con gradienti e animazioni */
+.building-card {
+    background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+    border: 1px solid #ddd;
+    border-radius: var(--radius-lg, 8px);
+    padding: var(--spacing-md, 1rem);
+    transition: all var(--transition-normal, 0.3s ease);
+    box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.building-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg, 0 4px 8px rgba(0, 0, 0, 0.1));
+    border-color: var(--primary-color, #8b5927);
+}
+
+/* Immagine dell'edificio nella card - Usa variabile per dimensione */
+.building-card img {
+    width: var(--building-icon-large, 64px);
+    height: var(--building-icon-large, 64px);
+    object-fit: contain;
+    display: block;
+    margin: 0 auto var(--spacing-sm, 0.5rem) auto;
+    background-color: #f5f5f5;
+    border-radius: var(--radius-sm, 4px);
+    padding: 4px;
+}
+
+/* Testi della card */
+.building-card h3 {
+    font-size: 1.1rem;
+    color: var(--primary-dark, #6a4522);
+    margin: var(--spacing-sm, 0.5rem) 0;
+    text-align: center;
+}
+
+.building-card p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+/* Azioni della card */
+.building-actions {
+    display: flex;
+    gap: var(--spacing-sm, 0.5rem);
+    margin-top: calc(var(--spacing-sm, 0.5rem) + 0.25rem);
+}
+
+.building-actions button {
+    flex: 1;
+    padding: var(--spacing-sm, 0.5rem);
+    font-size: 0.9rem;
+}
+
+/* Sezione nuovi edifici */
+.available-buildings {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md, 1rem);
+    margin-top: var(--spacing-md, 1rem);
+}
+
+/* Opzioni di costruzione */
+.building-option {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: var(--radius-md, 6px);
+    padding: var(--spacing-md, 1rem);
+    text-align: center;
+    transition: all var(--transition-normal, 0.3s ease);
+}
+
+.building-option:hover {
+    border-color: var(--primary-color, #8b5927);
+    box-shadow: 0 2px 6px rgba(139, 89, 39, 0.1);
+}
+
+/* Immagine edificio da costruire - Usa variabile per dimensione */
+.building-option img {
+    width: var(--building-icon-option, 48px);
+    height: var(--building-icon-option, 48px);
+    object-fit: contain;
+    margin: 0 auto var(--spacing-sm, 0.5rem) auto;
+    display: block;
+}
+
+/* Testi dell'opzione */
+.building-option h3 {
+    font-size: 1rem;
+    color: var(--primary-color, #8b5927);
+    margin: var(--spacing-sm, 0.5rem) 0;
+}
+
+.building-option p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0.25rem 0;
+}
+
+.building-option .cost {
+    font-weight: bold;
+    color: var(--primary-dark, #6a4522);
+    font-size: 0.9rem;
+    margin-top: var(--spacing-sm, 0.5rem);
+}
+
+/* Sezioni overview */
+.buildings-overview {
+    background: white;
+    border-radius: var(--radius-lg, 8px);
+    padding: var(--spacing-lg, 1.5rem);
+    margin-bottom: var(--spacing-xl, 2rem);
+    box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.buildings-overview h2 {
+    color: var(--primary-color, #8b5927);
+    margin-bottom: var(--spacing-md, 1rem);
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: var(--spacing-sm, 0.5rem);
+}
+
+.new-buildings {
+    background: white;
+    border-radius: var(--radius-lg, 8px);
+    padding: var(--spacing-lg, 1.5rem);
+    box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.new-buildings h2 {
+    color: var(--primary-color, #8b5927);
+    margin-bottom: var(--spacing-md, 1rem);
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: var(--spacing-sm, 0.5rem);
+}
+
+/* Media queries responsive */
+@media (max-width: 768px) {
+    .buildings-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--spacing-md, 1rem);
+    }
+    
+    .available-buildings {
+        grid-template-columns: 1fr;
+    }
+    
+    .building-card img,
+    .building-option img {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+@media (max-width: 480px) {
+    .buildings-overview,
+    .new-buildings {
+        padding: var(--spacing-md, 1rem);
+    }
+    
+    .buildings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Assicura che le icone nella mappa siano controllate dalla pagina edifici */
+.buildings-container .city-map .building-icon,
+.buildings-container .settlement-map .building-icon {
+    width: 20px;
+    height: 20px;
+    margin: 5px auto;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}

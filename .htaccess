@@ -1,0 +1,33 @@
+# Impedisci la visualizzazione diretta della directory
+Options -Indexes
+
+# Abilita la sovrascrittura degli URL
+RewriteEngine On
+
+# Aggiungi i tipi MIME corretti per i file JavaScript
+AddType application/javascript .js
+AddType application/javascript .mjs
+
+# Reindirizzamento di TUTTI i moduli JavaScript dalla directory modules/game a assets/js/modules/game
+RewriteRule ^modules/game/(.+\.js)$ /assets/js/modules/game/$1 [L]
+
+# Redirect delle richieste a file o directory che non esistono a index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+
+# Proteggi i file di configurazione
+<FilesMatch "^(config\.php|\.htaccess)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Impedisci l'accesso diretto ai file PHP nella directory src
+RewriteRule ^src/.*\.php$ - [F,L]
+
+# Imposta l'ora locale
+php_value date.timezone "Europe/Rome"
+
+# Mostra gli errori in modalità debug (rimuovere in produzione)
+php_flag display_errors On
+php_value error_reporting E_ALL

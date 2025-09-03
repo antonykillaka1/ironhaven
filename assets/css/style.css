@@ -1,0 +1,1153 @@
+/* assets/css/style.css - File CSS principale ottimizzato */
+
+/* Importa le variabili (se si usa import) o includere variabili direttamente qui */
+/* @import 'variables.css'; */
+
+/* Reset globale */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* Header e Navigazione */
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: var(--spacing-lg);
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-normal);
+}
+
+nav ul li a:hover {
+    color: var(--primary-light);
+}
+
+/* Layout principale */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+footer {
+    background-color: var(--primary-dark);
+    color: white;
+    text-align: center;
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+/* Pulsanti */
+.btn {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color var(--transition-normal);
+}
+
+.btn:hover {
+    background-color: var(--secondary-dark);
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+}
+
+.btn.primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+/* Notifiche */
+.notifications-container {
+    position: fixed;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 300px;
+    z-index: 1000;
+}
+
+.notification {
+    background-color: white;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    animation: fadeIn var(--transition-normal);
+}
+
+.notification.error {
+    border-left: 4px solid var(--error-color);
+}
+
+.notification.success {
+    border-left: 4px solid var(--success-color);
+}
+
+.notification.info {
+    border-left: 4px solid var(--info-color);
+}
+
+.notification.warning {
+    border-left: 4px solid var(--warning-color);
+}
+
+.notification.fade-out {
+    animation: fadeOut 0.5s;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid #ccc;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: var(--spacing-sm);
+    display: none;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    max-width: 550px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-bottom: var(--spacing-md);
+    font-size: 1.4rem;
+    color: var(--primary-color);
+}
+
+.close-modal {
+    float: right;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #777;
+    margin: calc(var(--spacing-sm) * -1) calc(var(--spacing-sm) * -1) 0 0;
+}
+
+.close-modal:hover {
+    color: var(--primary-color);
+}
+
+/* Autenticazione */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.auth-box {
+    background-color: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    width: 400px;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: var(--spacing-lg);
+}
+
+.tab {
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-normal);
+}
+
+.tab.active {
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.tab-content {
+    transition: opacity var(--transition-normal);
+}
+
+.tab-content.hidden {
+    display: none;
+}
+
+.auth-form h2 {
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    color: var(--primary-color);
+}
+
+/* Gioco */
+.game-container {
+    background-color: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-lg);
+}
+
+.resource-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--primary-dark);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.resource {
+    display: flex;
+    align-items: center;
+}
+
+.resource img {
+    width: 24px;
+    height: 24px;
+    margin-right: var(--spacing-sm);
+}
+
+.settlement-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid #ddd;
+}
+
+.settlement-stats {
+    display: flex;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    margin-left: var(--spacing-lg);
+}
+
+.stat img {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--spacing-sm);
+}
+
+.active-effects {
+    background-color: #f5f5f5;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.active-effects h3 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.active-effects ul {
+    list-style: none;
+}
+
+.active-effects li {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    background-color: white;
+    border-left: 3px solid var(--info-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.active-effects li.expired {
+    opacity: 0.5;
+}
+
+.effect-name {
+    font-weight: bold;
+}
+
+.effect-time {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.2rem var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+}
+
+.game-content {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.settlement-view {
+    flex: 3;
+    height: auto;
+    min-height: 600px;
+}
+
+.game-sidebar {
+    flex: 1;
+}
+
+/* Mappa della città */
+#city-map, 
+.city-map, 
+.settlement-map, 
+div[id="city-map"] {
+    border: 1px solid #ccc;
+    height: 600px;
+    min-height: 600px;
+    max-height: none;
+    background-color: #e8dabc;
+    position: relative;
+    overflow: visible;
+    display: block;
+    width: 100%;
+}
+
+.city-grid,
+div.city-grid {
+    height: 600px;
+    min-height: 600px;
+    max-height: none;
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+    gap: 1px;
+    position: relative;
+    width: 100%;
+}
+
+.city-cell {
+    min-height: 30px;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.city-cell:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.city-cell.selected {
+    background-color: rgba(var(--primary-light-rgb), 0.4);
+    border: 2px solid var(--primary-color);
+}
+
+.city-cell.building {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.city-cell.under-construction {
+    background-color: rgba(243, 156, 18, 0.3);
+    border: 2px solid #f39c12;
+}
+
+/* Icone edifici - Gerarchia chiara delle dimensioni */
+/* Mappa del gioco */
+#city-map .building-icon,
+.settlement-map .building-icon,
+.city-grid .building-icon {
+    width: var(--building-icon-small);
+    height: var(--building-icon-small);
+    margin: calc((100% - var(--building-icon-small)) / 2);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Lista edifici nella sidebar */
+.building-item .building-icon {
+    width: var(--building-icon-medium);
+    height: var(--building-icon-medium);
+    margin: 0 calc(var(--spacing-sm) + 0.25rem) 0 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Livello edificio */
+.building-level {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--primary-dark);
+    color: white;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.8rem;
+    border-top-left-radius: var(--radius-sm);
+}
+
+/* Indicatore costruzione */
+.construction-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: var(--spacing-sm) calc(var(--spacing-sm) + 0.25rem);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 100;
+    text-align: center;
+    min-width: 60px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Lista edifici */
+.buildings-list {
+    margin-bottom: var(--spacing-xl);
+}
+
+.buildings-list h3 {
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.buildings-container {
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    border-radius: var(--radius-sm);
+}
+
+.building-item {
+    display: flex;
+    padding: 0.6rem;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.building-item:hover {
+    background-color: #f9f9f9;
+}
+
+.building-item:last-child {
+    border-bottom: none;
+}
+
+.building-item .building-info {
+    flex: 1;
+}
+
+.building-item h4 {
+    margin: 0 0 0.1rem 0;
+    color: var(--primary-dark);
+    font-size: 1rem;
+}
+
+.building-item p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.quick-actions {
+    background-color: #f5f5f5;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+}
+
+.quick-actions h3 {
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.quick-actions button {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Modal di costruzione edifici */
+.building-info {
+    display: flex;
+    margin-bottom: var(--spacing-md);
+    align-items: flex-start;
+}
+
+.building-image,
+#upgrade-building-image,
+#manage-building-image {
+    width: var(--building-modal-icon);
+    height: var(--building-modal-icon);
+    margin-right: var(--spacing-md);
+    background-color: #f5f5f5;
+    border-radius: var(--radius-sm);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.building-image img,
+#upgrade-building-image,
+#manage-building-image {
+    max-width: calc(var(--building-modal-icon) - 10px);
+    max-height: calc(var(--building-modal-icon) - 10px);
+    object-fit: contain;
+}
+
+.building-description {
+    flex: 1;
+    color: #666;
+    line-height: 1.4;
+}
+
+.building-costs h3, 
+.building-benefits h3, 
+.construction-time h3,
+.upgrade-costs h3,
+.upgrade-benefits h3 {
+    margin-bottom: calc(var(--spacing-sm) + 0.25rem);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.building-costs-list, 
+.building-benefits-list,
+#upgrade-costs-list,
+#upgrade-benefits-list {
+    list-style: none;
+    margin-bottom: var(--spacing-md);
+}
+
+.building-costs-list li, 
+.building-benefits-list li,
+#upgrade-costs-list li,
+#upgrade-benefits-list li {
+    padding: 0.4rem 0;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.building-costs-list li img,
+#upgrade-costs-list li img {
+    width: var(--building-icon-tiny);
+    height: var(--building-icon-tiny);
+    margin-right: var(--spacing-sm);
+}
+
+.building-costs-list li.insufficient {
+    color: var(--error-color);
+}
+
+.construction-time {
+    margin-bottom: var(--spacing-md);
+}
+
+#construction-time,
+#upgrade-time {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--primary-dark);
+}
+
+.construction-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+#start-construction,
+#start-upgrade {
+    flex: 1;
+    padding: 0.6rem var(--spacing-md);
+}
+
+/* Creazione insediamento */
+.settlement-creation {
+    background-color: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+.settlement-creation h2 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.settlement-creation-intro {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.map-selection {
+    margin-bottom: var(--spacing-lg);
+}
+
+.map-selection h3 {
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+}
+
+.map-container {
+    height: 400px;
+    border: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    margin-bottom: var(--spacing-md);
+}
+
+.map-cell {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.map-cell:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.map-cell.selected {
+    border: 2px solid #8b5927;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.map-cell.terrain-plains {
+    background-color: #e8dabc;
+}
+
+.map-cell.terrain-forest {
+    background-color: #7cad7c;
+}
+
+.map-cell.terrain-hills {
+    background-color: #b79f7e;
+}
+
+.map-cell.terrain-water {
+    background-color: #7da0b8;
+}
+
+/* Utilities */
+.hidden {
+    display: none !important;
+}
+
+.modal-content > * {
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-content > *:last-child {
+    margin-bottom: 0;
+}
+
+/* Media Queries consolidate */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: var(--spacing-md);
+        max-width: 95%;
+    }
+    
+    .building-image,
+    #upgrade-building-image,
+    #manage-building-image {
+        width: calc(var(--building-modal-icon) + 20px);
+        height: calc(var(--building-modal-icon) + 20px);
+    }
+    
+    .building-image img,
+    #upgrade-building-image,
+    #manage-building-image {
+        max-width: calc(var(--building-modal-icon) + 10px);
+        max-height: calc(var(--building-modal-icon) + 10px);
+    }
+    
+    .building-costs-list li,
+    .building-benefits-list li,
+    #upgrade-costs-list li,
+    #upgrade-benefits-list li {
+        font-size: 0.85rem;
+    }
+    
+    .game-content {
+        flex-direction: column;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    nav ul li {
+        margin: var(--spacing-sm) 0;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: var(--spacing-md);
+    }
+    
+    .auth-box {
+        width: 95%;
+    }
+    
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+/* Mappa isometrica simile a Ikariam */
+.game-map {
+    perspective: 1000px;
+    perspective-origin: 50% 30%;
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 30%, #F4A460 70%, #D2691E 100%);
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+}
+
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+.map-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: rotateX(60deg) rotateY(-45deg);
+    transform-origin: 50% 50%;
+}
+
+/* Zone della mappa */
+.map-zone {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.map-zone::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: inherit;
+    opacity: 0.5;
+    border-radius: var(--radius-sm);
+    filter: blur(3px);
+}
+
+/* Slot disponibili */
+.map-slot {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border: 2px dashed #666;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.map-slot:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    border-color: #FFD700;
+    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
+}
+
+.map-slot.selected {
+    background: rgba(255, 215, 0, 0.4);
+    border-color: #FFD700;
+    transform: translateY(-5px);
+}
+
+.map-slot.occupied {
+    border: none;
+    background: transparent;
+}
+
+/* Edifici sulla mappa */
+.building-isometric {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    transform-style: preserve-3d;
+    transition: all 0.3s ease;
+}
+
+.building-isometric:hover {
+    transform: translateY(-5px) scale(1.1);
+}
+
+.building-icon-isometric {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.building-level-isometric {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid #FFD700;
+}
+
+/* Indicatori zona */
+.zone-indicator {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    opacity: 0.8;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.zone-indicator.RESIDENTIAL {
+    background: #4169E1;
+}
+
+.zone-indicator.PRODUCTION {
+    background: #228B22;
+}
+
+.zone-indicator.UTILITY {
+    background: #DAA520;
+}
+
+.zone-indicator.SPECIAL {
+    background: #8B4513;
+}
+
+/* Tooltip informativo */
+.building-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.building-isometric:hover .building-tooltip {
+    opacity: 1;
+}
+
+/* Animazioni di costruzione */
+.construction-animation {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 0, 0.2),
+        rgba(255, 255, 0, 0.2) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    animation: constructionStripes 1s linear infinite;
+}
+
+@keyframes constructionStripes {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(20px);
+    }
+}
+
+/* Particelle decorative */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #FFD700;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat 3s ease-out forwards;
+}
+
+@keyframes particleFloat {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100px) scale(0);
+        opacity: 0;
+    }
+}
+/* Override per forzare il rendering isometrico */
+#city-map.game-map {
+    border: 1px solid #ccc !important;
+    background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 30%, #F4A460 70%, #D2691E 100%) !important;
+    display: block !important;
+    position: relative !important;
+    overflow: hidden !important;
+    height: 600px !important;
+    perspective: 1000px !important;
+    perspective-origin: 50% 30% !important;
+}
+
+#city-map .map-container {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform-style: preserve-3d !important;
+}
+
+#city-map .map-grid {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    transform: rotateX(60deg) rotateY(-45deg) !important;
+    transform-origin: 50% 50% !important;
+}
+
+/* Nascondi eventuali elementi della vecchia griglia */
+#city-map .city-grid {
+    display: none !important;
+}
+
+/* Assicurati che gli slot e gli indicatori siano visibili */
+#city-map .map-slot {
+    position: absolute !important;
+    width: 50px !important;
+    height: 50px !important;
+    border: 2px dashed #666 !important;
+    border-radius: 3px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+}
+
+#city-map .map-slot:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-3px) !important;
+    border-color: #FFD700 !important;
+    box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4) !important;
+}
+
+#city-map .map-slot.selected {
+    background: rgba(255, 215, 0, 0.4) !important;
+    border-color: #FFD700 !important;
+    transform: translateY(-5px) !important;
+}
+
+#city-map .zone-indicator {
+    position: absolute !important;
+    top: 5px !important;
+    left: 5px !important;
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50% !important;
+    opacity: 0.8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    z-index: 20 !important;
+}
+
+#city-map .zone-indicator.RESIDENTIAL {
+    background: #4169E1 !important;
+}
+
+#city-map .zone-indicator.PRODUCTION {
+    background: #228B22 !important;
+}
+
+#city-map .zone-indicator.UTILITY {
+    background: #DAA520 !important;
+}
+
+#city-map .zone-indicator.SPECIAL {
+    background: #8B4513 !important;
+}
+
+/* Stili per gli edifici isometrici */
+#city-map .building-isometric {
+    position: absolute !important;
+    width: 45px !important;
+    height: 45px !important;
+    transform-style: preserve-3d !important;
+    transition: all 0.3s ease !important;
+    z-index: 30 !important;
+}
+
+#city-map .building-isometric:hover {
+    transform: translateY(-5px) scale(1.1) !important;
+    z-index: 40 !important;
+}
+
+#city-map .building-icon-isometric {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5)) !important;
+}
+
+#city-map .building-level-isometric {
+    position: absolute !important;
+    bottom: -5px !important;
+    right: -5px !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    padding: 2px 6px !important;
+    border-radius: 50% !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    border: 2px solid #FFD700 !important;
+    z-index: 50 !important;
+}
+/* Aggiungi alla fine del file style.css */
+.city-map {
+    width: 100%;
+    height: 600px;
+    border: 2px solid #8b5927;
+    background-color: #f5f5dc;
+}
+
+.city-grid {
+    display: grid !important;
+    grid-template-columns: repeat(15, 1fr) !important;
+    grid-template-rows: repeat(15, 1fr) !important;
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+}
+
+.city-cell {
+    min-height: 35px;
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    position: relative;
+    background-color: #e8dabc;
+    transition: background-color 0.2s ease;
+}
+
+.city-cell:hover {
+    background-color: rgba(255,255,255,0.3) !important;
+}
+
+.city-cell.building {
+    background-color: rgba(139, 89, 39, 0.1) !important;
+}
+
+.city-cell.under-construction {
+    background-color: rgba(243, 156, 18, 0.3) !important;
+    border: 2px solid #f39c12 !important;
+}

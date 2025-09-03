@@ -1,0 +1,629 @@
+/* assets/css/admin.css */
+.admin-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-container h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+}
+
+.search-box input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 0.5rem;
+    width: 250px;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.admin-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.admin-section {
+    margin-bottom: 2rem;
+}
+
+.admin-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    background-color: var(--primary-dark);
+    color: white;
+    padding: 0.8rem;
+    text-align: left;
+}
+
+.admin-table td {
+    padding: 0.8rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-table tr:hover td {
+    background-color: #f5f5f5;
+}
+
+.admin-table .actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    background-color: var(--secondary-dark);
+}
+
+.btn-small.delete-player {
+    background-color: var(--error-color);
+}
+
+.btn-small.delete-player:hover {
+    background-color: #c0392b;
+}
+
+.mission-difficulty {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    color: white;
+}
+
+.mission-difficulty.easy {
+    background-color: var(--success-color);
+}
+
+.mission-difficulty.medium {
+    background-color: var(--warning-color);
+}
+
+.mission-difficulty.hard {
+    background-color: var(--error-color);
+}
+
+.mission-difficulty.epic {
+    background-color: #8e44ad;
+}
+
+/* Modal per modifica giocatore */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.btn.error {
+    background-color: var(--error-color);
+}
+
+.btn.error:hover {
+    background-color: #c0392b;
+}
+
+/* Debug Section */
+.debug-section {
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.debug-section h3 {
+    color: #e67e22;
+    border-bottom-color: #e67e22;
+}
+
+.debug-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.debug-card {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.debug-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.debug-card h4 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.debug-card p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.debug-btn {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.debug-btn:hover {
+    background-color: #d35400;
+}
+
+.debug-btn.danger {
+    background-color: #e74c3c;
+}
+
+.debug-btn.danger:hover {
+    background-color: #c0392b;
+}
+
+.debug-resource-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.debug-resource-controls input,
+.debug-resource-controls select {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.debug-resource-controls input {
+    width: 100px;
+}
+
+.debug-resource-controls select {
+    width: 150px;
+}
+
+.debug-time-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.debug-time-controls input {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 100px;
+}
+
+.debug-player-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.debug-player-controls input {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.debug-player-info {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.debug-player-info p {
+    margin: 0.5rem 0;
+}
+
+.debug-card .btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .debug-tools {
+        grid-template-columns: 1fr;
+    }
+    
+    .debug-resource-controls,
+    .debug-player-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .debug-resource-controls input,
+    .debug-resource-controls select,
+    .debug-player-controls input {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+/* Aggiungi questo CSS al file admin.css */
+
+/* Stile generale per la sezione debug */
+.debug-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.debug-section h3 {
+    color: #495057;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+}
+
+.debug-section h3::before {
+    content: "🔧";
+    margin-right: 0.5rem;
+}
+
+/* Grid layout per le debug card */
+.debug-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Stile per ogni debug card */
+.debug-card {
+    background: white;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #e9ecef;
+}
+
+.debug-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.debug-card h4 {
+    color: #495057;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.debug-card h4::before {
+    content: "⚙️";
+    margin-right: 0.5rem;
+}
+
+.debug-card p {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+/* Debug controls styling */
+.debug-resource-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.debug-resource-controls input,
+.debug-resource-controls select {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.debug-time-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.debug-time-controls input {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Debug buttons styling */
+.debug-btn {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.debug-btn:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004a9e 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
+}
+
+.debug-btn:active {
+    transform: translateY(0);
+}
+
+.debug-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.debug-btn.danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+.debug-btn.danger:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+    box-shadow: 0 3px 6px rgba(220, 53, 69, 0.3);
+}
+
+/* Card che occupa tutta la larghezza */
+.debug-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Debug player controls */
+.debug-player-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.debug-player-controls input {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.debug-player-controls button {
+    white-space: nowrap;
+}
+
+/* Debug player info display */
+.debug-player-info {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.debug-player-info p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+}
+
+.debug-player-info strong {
+    color: #495057;
+}
+
+/* Nuove sezioni per funzionalità aggiuntive */
+.debug-card.resource-manager {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.debug-card.building-manager {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* Checkbox container for building selection */
+.buildings-checkbox-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 1rem 0;
+    background: #f8f9fa;
+}
+
+.building-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.building-checkbox:last-child {
+    border-bottom: none;
+}
+
+.building-checkbox input {
+    margin-right: 0.5rem;
+}
+
+.building-checkbox label {
+    flex: 1;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Loading states */
+.debug-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.debug-btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s linear infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .debug-tools {
+        grid-template-columns: 1fr;
+    }
+    
+    .debug-player-controls {
+        flex-direction: column;
+    }
+    
+    .debug-player-controls input {
+        min-width: 100%;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.debug-card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.status-indicator.success {
+    background-color: #28a745;
+}
+
+.status-indicator.error {
+    background-color: #dc3545;
+}
+
+.status-indicator.warning {
+    background-color: #ffc107;
+}
+
+.status-indicator.info {
+    background-color: #17a2b8;
+}

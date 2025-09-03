@@ -1,0 +1,241 @@
+/* assets/css/missions.css */
+.missions-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.missions-container h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.player-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: var(--primary-dark);
+    color: white;
+    border-radius: 3px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-weight: bold;
+}
+
+.missions-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.missions-sections .missions-section:first-child {
+    grid-column: 1 / -1;
+}
+
+.missions-section {
+    margin-bottom: 2rem;
+}
+
+.missions-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.empty-list {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 3px;
+    color: #666;
+}
+
+.missions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.mission-card {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.mission-card:hover {
+    transform: translateY(-2px);
+}
+
+.mission-card.claimed {
+    opacity: 0.7;
+}
+
+.mission-header {
+    background-color: var(--primary-dark);
+    color: white;
+    padding: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mission-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.mission-difficulty {
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    background-color: var(--primary-color);
+}
+
+.mission-difficulty.easy {
+    background-color: var(--success-color);
+}
+
+.mission-difficulty.medium {
+    background-color: var(--warning-color);
+}
+
+.mission-difficulty.hard {
+    background-color: var(--error-color);
+}
+
+.mission-difficulty.epic {
+    background-color: #8e44ad;
+}
+
+.mission-body {
+    padding: 1rem;
+}
+
+.mission-body p {
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+.mission-costs, .mission-rewards {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: #f0f0f0;
+    border-radius: 3px;
+}
+
+.mission-costs {
+    margin-bottom: 0.5rem;
+}
+
+.mission-cost, .reward {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.mission-cost img, .reward img {
+    width: 20px;
+    height: 20px;
+}
+
+.reward.special {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.mission-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+}
+
+.mission-time {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.rewards-claimed {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+/* Modal Ricompensa */
+.reward-details {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.reward-image {
+    width: 100px;
+    height: 100px;
+    margin-right: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+}
+
+.reward-image img {
+    max-width: 80px;
+    max-height: 80px;
+}
+
+.reward-info {
+    flex: 1;
+}
+
+.reward-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.standard-rewards {
+    margin-bottom: 1.5rem;
+}
+
+.standard-rewards h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+#standard-rewards-list {
+    list-style: none;
+}
+
+#standard-rewards-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+#standard-rewards-list li img {
+    width: 20px;
+    height: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}

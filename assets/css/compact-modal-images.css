@@ -1,0 +1,160 @@
+/* assets/css/compact-modal-images.css - Specifico per modali compatti */
+
+/* 
+ * Questo file contiene solo override specifici per i modali di costruzione 
+ * per mantenere le immagini compatte e evitare conflitti
+ */
+
+/* Override per i modali di costruzione edifici */
+#building-construction-modal .building-image,
+#building-construction-modal .building-image img,
+#upgrade-modal .building-image,
+#upgrade-modal .building-image img,
+#manage-modal .building-image,
+#manage-modal .building-image img {
+    width: 50px !important;
+    height: 50px !important;
+    max-width: 50px !important;
+    max-height: 50px !important;
+}
+
+/* Contenitore dell'immagine nel modal */
+#building-construction-modal .building-image,
+#upgrade-modal .building-image,
+#manage-modal .building-image {
+    margin-right: var(--spacing-md, 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: var(--radius-sm, 3px);
+}
+
+/* Layout della sezione building-info */
+#building-construction-modal .building-info,
+#upgrade-modal .building-info,
+#manage-modal .building-info {
+    display: flex;
+    margin-bottom: var(--spacing-md, 1rem);
+    align-items: center;
+    min-height: 50px;
+}
+
+/* Icone dei costi nei modali - più piccole per risparmiare spazio */
+#building-construction-modal #building-costs-list li img,
+#upgrade-modal #upgrade-costs-list li img,
+#manage-modal #manage-costs-list li img {
+    width: 16px !important;
+    height: 16px !important;
+    margin-right: 0.4rem;
+}
+
+/* Titoli più compatti nei modali */
+#building-construction-modal #building-name,
+#upgrade-modal #upgrade-building-name,
+#manage-modal #manage-building-name {
+    font-size: 1.3rem;
+    margin-bottom: var(--spacing-sm, 0.5rem);
+}
+
+/* Descrizioni più compatte */
+#building-construction-modal #building-description,
+#upgrade-modal #upgrade-description,
+#manage-modal #manage-description {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* Layout generale del modal compatto */
+#building-construction-modal .modal-content,
+#upgrade-modal .modal-content,
+#manage-modal .modal-content {
+    padding: 1.2rem;
+    max-width: 480px;
+}
+
+/* Pulsanti leggermente più compatti */
+#building-construction-modal .construction-actions button,
+#upgrade-modal .upgrade-actions button,
+#manage-modal .manage-actions button {
+    padding: var(--spacing-sm, 0.5rem) 0.9rem;
+    font-size: 0.95rem;
+}
+
+/* Liste di costi e benefici compatte */
+#building-construction-modal .building-costs,
+#building-construction-modal .building-benefits,
+#upgrade-modal .upgrade-costs,
+#upgrade-modal .upgrade-benefits,
+#manage-modal .manage-costs,
+#manage-modal .manage-benefits {
+    margin-bottom: var(--spacing-md, 1rem);
+}
+
+#building-construction-modal .building-costs-list li,
+#building-construction-modal .building-benefits-list li,
+#upgrade-modal .upgrade-costs-list li,
+#upgrade-modal .upgrade-benefits-list li {
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    align-items: center;
+}
+
+/* Assicura che tutte le immagini nel modal siano contenute */
+#building-construction-modal img,
+#upgrade-modal img,
+#manage-modal img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Preview per le risorse nei modali */
+.modal-content .resource-preview,
+.modal-content .building-preview {
+    max-width: 300px;
+    height: auto;
+    margin: 0 auto;
+}
+
+/* Responsive per schermi piccoli */
+@media (max-width: 768px) {
+    #building-construction-modal .building-image,
+    #building-construction-modal .building-image img,
+    #upgrade-modal .building-image,
+    #upgrade-modal .building-image img,
+    #manage-modal .building-image,
+    #manage-modal .building-image img {
+        width: 40px !important;
+        height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
+    }
+    
+    #building-construction-modal .modal-content,
+    #upgrade-modal .modal-content,
+    #manage-modal .modal-content {
+        padding: var(--spacing-md, 1rem);
+        max-width: 95%;
+    }
+}
+
+/* Override per evitare conflitti con animazioni */
+#building-construction-modal .building-image,
+#upgrade-modal .building-image,
+#manage-modal .building-image {
+    transition: none;
+}
+
+/* Assicura che il layout rimanga compatto anche con testo lungo */
+#building-construction-modal .building-info > div,
+#upgrade-modal .building-info > div,
+#manage-modal .building-info > div {
+    flex: 1;
+    overflow: hidden;
+}
