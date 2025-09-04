@@ -191,7 +191,7 @@ try {
 <div id="notifications-container" class="notifications-container"></div>
 
 <!-- Script principale del gioco -->
-<script src="assets/js/game.js"></script>
+<script src="assets/js/game.js?v=<?= GAME_VERSION ?>"></script>
 
 <!-- Script admin semplificato (solo per admin in debug mode) -->
 <?php if (defined('DEBUG_MODE') && DEBUG_MODE && $currentUser && isset($currentUser['is_admin']) && $currentUser['is_admin'] == 1): ?>

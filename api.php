@@ -556,7 +556,39 @@ switch ($action) {
             'results' => $results
         ]);
         break;
-        
+	    case 'get_resources':
+        $playerId = $auth->getUserId();
+        $settlementManager = new SettlementManager();
+        $settlement = $settlementManager->getPlayerSettlement($playerId);
+
+        if (!$settlement) {
+            apiError('Insediamento non trovato');
+        }
+
+        $resourceManager = new ResourceManager();
+
+        // Quantità correnti dal DB
+        $amounts = $db->fetch(
+            "SELECT * FROM resources WHERE settlement_id = ?",
+            [$settlement['id']]
+        );
+
+        // Produzione oraria calcolata dagli edifici
+        $productionData = $resourceManager->calculateProduction($settlement['id']);
+        $rates = $productionData['production'];
+
+        // Output strutturato
+        $out = [];
+        foreach (['wood','stone','food','water','iron','gold'] as $res) {
+            $out[$res] = [
+                'amount'   => isset($amounts[$res]) ? (int)$amounts[$res] : 0,
+                'per_hour' => isset($rates[$res]) ? (int)$rates[$res] : 0,
+            ];
+        }
+
+        echo json_encode(['success' => true, 'resources' => $out]);
+        break;
+		
     default:
         apiError('Azione non riconosciuta');
 }

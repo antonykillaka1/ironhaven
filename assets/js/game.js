@@ -608,6 +608,33 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Carica lista edifici
         IronHaven.buildings.updateBuildingsList();
+		
+		if (!IronHaven.ui || typeof IronHaven.ui.updateProductionDisplay !== 'function') {
+  IronHaven.ui = IronHaven.ui || {};
+  IronHaven.ui.updateProductionDisplay = function() {
+    const buildings = IronHaven.state.buildings || [];
+    const production = { wood: 0, stone: 0, food: 0, water: 0, iron: 0, gold: 0 };
+
+    buildings.forEach(b => {
+      if (b.construction_ends) return;
+      const level = b.level;
+      switch (b.type) {
+        case 'farm':       production.food  += 15 + 10 * (level - 1); break;
+        case 'woodcutter': production.wood  += 20 + 12 * (level - 1); break;
+        case 'quarry':     production.stone += 15 +  9 * (level - 1); break;
+        case 'well':       production.water += 10 +  7 * (level - 1); break;
+      }
+    });
+
+    Object.keys(production).forEach(res => {
+      const el = document.getElementById(`${res}-production`);
+      if (!el) return;
+      el.textContent = production[res] > 0 ? `+${production[res]}` : '+0';
+      if (production[res] > 0) { el.style.color = '#4caf50'; el.style.fontWeight = 'bold'; }
+    });
+  };
+}
+
         
         // Carica dati iniziali
         IronHaven.api.getSettlement();
