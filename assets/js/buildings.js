@@ -159,6 +159,33 @@ document.addEventListener('click', async (e) => {
     btn.textContent = original;
   }
 });
+  // Click su "Demolisci" (rimuove un edificio completato)
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.demolish-build');
+    if (!btn) return;
+
+    const id = parseInt(btn.dataset.id, 10);
+    if (!id) return;
+
+    if (!confirm('Demolire questo edificio? Operazione permanente (nessun rimborso).')) {
+      return;
+    }
+
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Demolizione...';
+
+    const result = await apiCall('demolish_building', { building_id: id }, 'POST');
+
+    if (result) {
+      notify('success', 'Edificio demolito');
+      location.reload();
+    } else {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+
   // Avvia countdown per le card "In costruzione"
   initConstructionTimers();
 

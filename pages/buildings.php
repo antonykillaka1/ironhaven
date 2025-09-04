@@ -46,51 +46,44 @@ include_once 'templates/header.php';
             <p>Non hai ancora costruito nessuna struttura. Inizia a costruire per far crescere il tuo insediamento!</p>
         <?php else: ?>
             <div class="buildings-grid">
-                <?php foreach ($buildings as $building): ?>
-                    <?php
-                        $isUnderConstruction = !empty($building['construction_ends']);
-                        $endsEpoch = $isUnderConstruction ? strtotime($building['construction_ends']) : null;
-                    ?>
-                    <div
-                        class="building-card"
-                        data-id="<?php echo (int)$building['id']; ?>"
-                        data-status="<?php echo $isUnderConstruction ? 'building' : 'completed'; ?>"
-                        <?php if ($isUnderConstruction): ?>
-                            data-ends="<?php echo $endsEpoch; ?>"
-                        <?php endif; ?>
-                    >
-                        <img
-                            src="assets/images/buildings/<?php echo strtolower($building['type']); ?>.png"
-                            alt="<?php echo htmlspecialchars($building['type']); ?>"
-                        >
-                        <h3><?php echo htmlspecialchars($building['type']); ?></h3>
+<?php foreach ($buildings as $building): ?>
+    <?php
+        // È davvero in costruzione solo se construction_ends > adesso
+        $isUnderConstruction = !empty($building['construction_ends']) && strtotime($building['construction_ends']) > time();
+        $endsTs = !empty($building['construction_ends']) ? strtotime($building['construction_ends']) : null;
+    ?>
+    <div class="building-card"
+         data-id="<?php echo (int)$building['id']; ?>"
+         data-status="<?php echo $isUnderConstruction ? 'building' : 'completed'; ?>">
 
-                        <p>Livello: <?php echo (int)$building['level']; ?></p>
+        <img src="assets/images/buildings/<?php echo strtolower($building['type']); ?>.png"
+             alt="<?php echo htmlspecialchars($building['type']); ?>">
 
-                        <p>
-                            Stato:
-                            <span class="status-text">
-                                <?php echo $isUnderConstruction ? 'In costruzione' : 'Completato'; ?>
-                            </span>
-                            <?php if ($isUnderConstruction): ?>
-                                <!-- Timer countdown (aggiornato da assets/js/buildings.js) -->
-                                <span class="construction-timer" data-ends="<?php echo $endsEpoch; ?>"></span>
-                            <?php endif; ?>
-                        </p>
+        <h3><?php echo htmlspecialchars($building['type']); ?></h3>
+        <p>Livello: <?php echo (int)$building['level']; ?></p>
 
-                        <div class="building-actions">
-                            <?php if (!empty($building['construction_ends'])): ?>
-                              <button class="cancel-build" data-id="<?php echo (int)$building['id']; ?>">Annulla</button>
-                              <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>" disabled>Potenzia</button>
-                              <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>" disabled>Gestisci</button>
-                            <?php else: ?>
-                              <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>">Potenzia</button>
-                              <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>">Gestisci</button>
-                            <?php endif; ?>
-                        </div>
+        <p>
+            Stato:
+            <span class="status-text"><?php echo $isUnderConstruction ? 'In costruzione' : 'Completato'; ?></span>
+            <?php if ($isUnderConstruction && $endsTs): ?>
+                <span class="construction-timer" data-ends="<?php echo $endsTs; ?>"></span>
+            <?php endif; ?>
+        </p>
 
-                    </div>
-                <?php endforeach; ?>
+        <div class="building-actions">
+            <?php if ($isUnderConstruction): ?>
+                <button class="cancel-build" data-id="<?php echo (int)$building['id']; ?>">Annulla</button>
+                <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>" disabled>Potenzia</button>
+                <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>" disabled>Gestisci</button>
+            <?php else: ?>
+                <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>">Potenzia</button>
+                <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>">Gestisci</button>
+                <button class="demolish-build" data-id="<?php echo (int)$building['id']; ?>">Demolisci</button>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
+
             </div>
         <?php endif; ?>
     </div>
