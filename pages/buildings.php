@@ -84,8 +84,6 @@ include_once 'templates/header.php';
         </div>
     </div>
 </div>
-<!-- Carica il file principale con i moduli ES6 -->
-<script src="assets/js/buildings.js"></script>
 <?php
 // Includi il footer
 include_once 'templates/footer.php';

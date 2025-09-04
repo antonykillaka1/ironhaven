@@ -25,7 +25,7 @@
     
     <!-- 5. CSS specifico della pagina -->
     <?php if (isset($pageStylesheet)): ?>
-    <link rel="stylesheet" href="assets/css/<?php echo $pageStylesheet; ?>.css">
+    <link rel="stylesheet" href="assets/css/<?php echo $pageStylesheet; ?>.css?v=<?php echo GAME_VERSION; ?>">
     <?php endif; ?>
 </head>
 <body>

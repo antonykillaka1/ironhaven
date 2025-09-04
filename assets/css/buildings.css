@@ -186,3 +186,251 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+/* === LAYOUT PAGINA EDIFICI - FIX RESPONSIVE === */
+
+/* Contenitore sezione */
+.buildings-section,
+.buildings-wrapper {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+
+/* Titoli */
+.buildings-section h2,
+.buildings-section h3 {
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+/* Griglia edifici: multi-riga, niente scroll interno */
+.buildings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* Card edificio */
+.building-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e8e1d8;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  transition: transform .15s ease, box-shadow .15s ease;
+  height: 100%;
+}
+
+.building-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* Immagine */
+.building-card img {
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Testi */
+.building-card h3 {
+  margin: 6px 0 2px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+.building-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b5c4f;
+}
+
+/* Azioni */
+.building-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.building-actions .upgrade-btn,
+.building-actions .manage-btn,
+.building-actions button {
+  padding: 8px 12px;
+  border: 1px solid #cdb59f;
+  background: #fff;
+  color: #5a4a3a;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.building-actions button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* —— RIMUOVI FORZATURE PRECEDENTI (evita scrollbar interna) —— */
+.buildings-list,
+.buildings-container,
+.buildings-grid,
+.buildings-wrapper {
+  overflow: visible !important;
+}
+
+.buildings-list,
+.buildings-container {
+  max-height: none !important;
+}
+
+/* Responsive piccoli schermi */
+@media (max-width: 560px) {
+  .buildings-section,
+  .buildings-wrapper { padding: 12px; }
+  .buildings-grid { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .building-card img { width: 72px; height: 72px; }
+}
+/* === OVERRIDE LAYOUT EDIFICI (in fondo al file) === */
+
+/* Contenitore pagina edifici centrato */
+.buildings-container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* Sezioni bianche con ombra leggere, senza scroll interno */
+.buildings-overview,
+.new-buildings {
+  overflow: visible !important;
+  max-height: none !important;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+  padding: 24px;
+}
+
+/* Griglia responsive multi-riga (niente scroll interno) */
+.buildings-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 16px !important;
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* Card flessibili con azioni in basso */
+.building-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  border: 1px solid #e8e1d8;
+  border-radius: 12px;
+  background: #fff; /* prevale su eventuale gradiente */
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.building-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* Immagine ben visibile */
+.building-card img {
+  width: 88px !important;
+  height: 88px !important;
+  object-fit: contain;
+}
+
+/* Testi */
+.building-card h3 {
+  margin: 6px 0 2px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+.building-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b5c4f;
+}
+
+/* Azioni in basso allineate */
+.building-actions {
+  margin-top: auto !important;
+  display: flex;
+  gap: 8px;
+}
+.building-actions button {
+  padding: 8px 12px;
+  border: 1px solid #cdb59f;
+  background: #fff;
+  color: #5a4a3a;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.building-actions button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .buildings-overview,
+  .new-buildings { padding: 16px; }
+  .buildings-grid { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .building-card img { width: 72px !important; height: 72px !important; }
+}
+/* === KILL SCROLLBAR INTERNA — OVERRIDES FINALI === */
+
+/* Contenitori sezione: nessun limite di altezza, niente overflow */
+.buildings-container,
+.buildings-overview,
+.new-buildings {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Se qualche wrapper intermedio imponesse overflow */
+.buildings-container > *,
+.buildings-overview > * {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* Griglia: multi-riga, senza limiti */
+.buildings-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  grid-auto-rows: auto !important;
+  align-content: start !important;
+  gap: 16px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Card sempre flessibili, azioni in basso */
+.building-card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+/* Se lo scroll venisse dal <main> generale, lo disattiviamo comunque */
+main {
+  overflow: visible !important;
+}
+
