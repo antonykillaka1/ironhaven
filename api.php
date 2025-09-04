@@ -588,7 +588,62 @@ switch ($action) {
 
         echo json_encode(['success' => true, 'resources' => $out]);
         break;
-		
+		    case 'cancel_construction':
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        apiError('Metodo non consentito', 405);
+    }
+
+    $data = json_decode(file_get_contents('php://input'), true);
+    $buildingId = isset($data['building_id']) ? (int)$data['building_id'] : 0;
+    if ($buildingId <= 0) {
+        apiError('ID edificio mancante o non valido');
+    }
+
+    $playerId = $auth->getUserId();
+    $settlementManager = new SettlementManager();
+    $settlement = $settlementManager->getPlayerSettlement($playerId);
+    if (!$settlement) {
+        apiError('Insediamento non trovato');
+    }
+
+    // Verifica appartenenza + stato "in costruzione"
+    $building = $db->fetch(
+        "SELECT * FROM buildings WHERE id = ? AND settlement_id = ?",
+        [$buildingId, $settlement['id']]
+    );
+    if (!$building) {
+        apiError('Edificio non trovato');
+    }
+
+    // Deve essere ancora in costruzione (construction_ends > adesso)
+    if (empty($building['construction_ends']) || strtotime($building['construction_ends']) <= time()) {
+        apiError('L\'edificio non è annullabile (non in costruzione)');
+    }
+
+    // Cancellazione "hard" dell'edificio in costruzione
+    // (se preferisci soft-cancel, dimmelo e passiamo a un flag)
+    $deletedRows = 0;
+    if (method_exists($db, 'delete')) {
+        $deletedRows = $db->delete(
+            'buildings',
+            'id = ? AND settlement_id = ? AND construction_ends > NOW()',
+            [$buildingId, $settlement['id']]
+        );
+    } else {
+        // fallback generico
+        $ok = $db->execute(
+            "DELETE FROM buildings WHERE id = ? AND settlement_id = ? AND construction_ends > NOW()",
+            [$buildingId, $settlement['id']]
+        );
+        $deletedRows = $ok ? 1 : 0;
+    }
+
+    if ($deletedRows > 0) {
+        echo json_encode(['success' => true]);
+    } else {
+        apiError('Annullamento costruzione fallito');
+    }
+    break;	
     default:
         apiError('Azione non riconosciuta');
 }

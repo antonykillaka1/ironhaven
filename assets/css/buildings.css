@@ -433,4 +433,128 @@
 main {
   overflow: visible !important;
 }
+/* === MOBILE TWEAK — Buildings page === */
+
+/* Micro layout fix su telefoni piccoli (≤380px): 1 colonna, bottoni in colonna */
+@media (max-width: 380px) {
+  .buildings-container { padding: 0 12px; }
+  .buildings-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .building-card { padding: 12px !important; border-radius: 10px; }
+  .building-card img { width: 64px !important; height: 64px !important; }
+  .building-card h3 { font-size: 15px; }
+  .building-card p { font-size: 12px; }
+  .building-actions { flex-direction: column; gap: 8px; }
+  .building-actions button { width: 100%; min-height: 44px; font-size: 14px; }
+}
+
+/* Telefoni compatti ma un filo più larghi (381–560px): 2 colonne compatte */
+@media (min-width: 381px) and (max-width: 560px) {
+  .buildings-container { padding: 0 14px; }
+  .buildings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+  .building-card { padding: 14px !important; }
+  .building-card img { width: 72px !important; height: 72px !important; }
+  .building-actions button { min-height: 40px; font-size: 14px; }
+}
+
+/* 561–768px: 2–3 colonne, un po' più aria */
+@media (min-width: 561px) and (max-width: 768px) {
+  .buildings-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; gap: 14px !important; }
+  .building-card img { width: 80px !important; height: 80px !important; }
+}
+
+/* Accessibilità: riduci animazioni se l’utente preferisce */
+@media (prefers-reduced-motion: reduce) {
+  .building-card,
+  .building-card:hover { transition: none !important; transform: none !important; }
+}
+
+/* === HOVER & FOCUS — Building cards === */
+.building-card {
+  position: relative;
+  overflow: hidden; /* per clip di bagliore/ring */
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .25s ease;
+}
+
+/* ring/ombra morbida al passaggio */
+@media (hover:hover) and (pointer:fine) {
+  .building-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    border-color: var(--primary-color, #8b5927);
+    background: linear-gradient(to bottom, #fff, #faf7f3);
+  }
+  .building-card:hover h3 {
+    color: var(--primary-color, #8b5927);
+  }
+  .building-card:hover img {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.12));
+    transition: transform .15s ease, filter .15s ease;
+  }
+}
+
+/* Accessibilità: stesso effetto quando si naviga con tastiera */
+.building-card:focus-within {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px rgba(139, 89, 39, .25), 0 8px 20px rgba(0,0,0,.12);
+  border-color: var(--primary-color, #8b5927);
+}
+
+/* Bottoni: hover/active chiari e “tappabili” */
+.building-actions button {
+  transition: background .15s ease, border-color .15s ease, transform .08s ease;
+}
+@media (hover:hover) and (pointer:fine) {
+  .building-actions button:hover {
+    background: #f6efe7;
+    border-color: var(--primary-color, #8b5927);
+  }
+}
+.building-actions button:active {
+  transform: translateY(1px);
+}
+
+/* Stato disabilitato (es. in costruzione): indicativo ma pulito */
+.building-actions button[disabled] {
+  background: #f7f2ed;
+  border-color: #e5d7c6;
+  color: #9a8b7a;
+  filter: saturate(.7);
+  cursor: not-allowed;
+}
+
+/* Variante (facoltativa): mostra le azioni solo su hover/focus
+   — decommenta se vuoi che i bottoni compaiano al passaggio del mouse */
+
+.building-actions { opacity: 0; transform: translateY(6px); transition: opacity .15s ease, transform .15s ease; }
+@media (hover:hover) and (pointer:fine) {
+  .building-card:hover .building-actions { opacity: 1; transform: translateY(0); }
+}
+.building-card:focus-within .building-actions { opacity: 1; transform: translateY(0); }
+
+/* Badge timer costruzione */
+.construction-timer {
+  margin-left: 6px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a6d3b;
+  background: #fff3cd;
+  border: 1px solid #ffe8a1;
+  border-radius: 8px;
+}
+
+.building-card[data-status="building"] {
+  border-color: #e0a800;
+}
+.cancel-build {
+  border: 1px solid #c0392b;
+  color: #c0392b;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.cancel-build:hover { background: #fdecea; }
+.cancel-build:disabled { opacity: .7; cursor: not-allowed; }
 

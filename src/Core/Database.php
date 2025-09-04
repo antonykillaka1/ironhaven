@@ -108,6 +108,28 @@ class Database {
         
         return $this->query($sql, $params)->rowCount();
     }
+
+    /**
+     * Esegue una query generica (INSERT/UPDATE/DELETE/DDL).
+     * Ritorna true/false a seconda dell’esito.
+     */
+    public function execute($sql, $params = []) {
+        try {
+            $stmt = $this->query($sql, $params); // riusa logging/validazioni di query()
+            return $stmt !== false;
+        } catch (\PDOException $e) {
+            // query() ha già loggato, rilancio per coerenza con il resto del wrapper
+            throw $e;
+        }
+    }
+
+    /**
+     * Helper per cancellazioni: ritorna il numero di righe cancellate.
+     */
+    public function delete($table, $where, $params = []) {
+        $sql = "DELETE FROM {$table} WHERE {$where}";
+        return $this->query($sql, $params)->rowCount();
+    }
     
     // Metodo specifico per debug popolazione
     public function fetchPopulation($settlementId) {

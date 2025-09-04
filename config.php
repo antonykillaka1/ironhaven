@@ -18,7 +18,7 @@ define('DB_PASS', '9Ang2l5iKtm|'); // Da cambiare in produzione
 define('STARTING_RESOURCES', 200); // Risorse iniziali per giocatore
 define('BASE_CONSUMPTION_WATER', 2); // Consumo acqua per abitante/ora
 define('BASE_CONSUMPTION_FOOD', 3); // Consumo cibo per abitante/ora
-define('GAME_VERSION', '0.1.2.0');
+define('GAME_VERSION', '0.1.2.7');
 define('GAME_NAME', 'Ironhaven');
 
 // Impostazioni temporali
