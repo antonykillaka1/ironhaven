@@ -1,38 +1,30 @@
 <?php
 // pages/buildings.php
-// Richiedi file necessari
 require_once 'includes/autoload.php';
 require_once 'config.php';
 
-// Imposta lo script e lo stylesheet della pagina (il footer caricherà assets/js/buildings.js?v=GAME_VERSION)
 $pageScript = 'buildings';
 $pageStylesheet = 'buildings';
 
-// Usa le classi necessarie
 use Ironhaven\Core\Auth;
 use Ironhaven\Core\SettlementManager;
 
-// Inizializza auth e controlla se l'utente è loggato
 $auth = Auth::getInstance();
 if (!$auth->isLoggedIn()) {
     header('Location: index.php');
     exit();
 }
 
-// Ottieni l'insediamento e gli edifici
 $settlementManager = new SettlementManager();
 $settlement = $settlementManager->getPlayerSettlement($auth->getUserId());
 
 if (!$settlement) {
-    // Reindirizza alla pagina di creazione insediamento se l'utente non ne ha uno
     header('Location: index.php?page=create_settlement');
     exit();
 }
 
-// Ottieni tutti gli edifici nell'insediamento
 $buildings = $settlementManager->getBuildings($settlement['id']);
 
-// Includi l'header
 include_once 'templates/header.php';
 ?>
 
@@ -46,42 +38,65 @@ include_once 'templates/header.php';
             <p>Non hai ancora costruito nessuna struttura. Inizia a costruire per far crescere il tuo insediamento!</p>
         <?php else: ?>
             <div class="buildings-grid">
-<?php foreach ($buildings as $building): ?>
-    <?php
-        // È davvero in costruzione solo se construction_ends > adesso
-        $isUnderConstruction = !empty($building['construction_ends']) && strtotime($building['construction_ends']) > time();
-        $endsTs = !empty($building['construction_ends']) ? strtotime($building['construction_ends']) : null;
-    ?>
-    <div class="building-card"
-         data-id="<?php echo (int)$building['id']; ?>"
-         data-status="<?php echo $isUnderConstruction ? 'building' : 'completed'; ?>">
+                <?php foreach ($buildings as $building): ?>
+  <?php
+    $now     = time();
+    $endsTs  = !empty($building['construction_ends']) ? strtotime($building['construction_ends']) : null;
 
-        <img src="assets/images/buildings/<?php echo strtolower($building['type']); ?>.png"
-             alt="<?php echo htmlspecialchars($building['type']); ?>">
+    // prova a trovare il campo di "start" con i nomi più comuni
+    $startTs = null;
+    foreach (['construction_starts','construction_started','construction_start','started_at'] as $k) {
+        if (!empty($building[$k])) { $startTs = strtotime($building[$k]); break; }
+    }
 
-        <h3><?php echo htmlspecialchars($building['type']); ?></h3>
-        <p>Livello: <?php echo (int)$building['level']; ?></p>
+    $isUnderConstruction = !empty($endsTs) && $endsTs > $now;
+    $isUpgrade           = $isUnderConstruction && ((int)$building['level'] > 1);
+    $variantClass        = $isUpgrade ? 'upgrade' : 'new';
+  ?>
+  <div class="building-card"
+       data-id="<?php echo (int)$building['id']; ?>"
+       data-status="<?php echo $isUnderConstruction ? 'building' : 'completed'; ?>">
 
-        <p>
-            Stato:
-            <span class="status-text"><?php echo $isUnderConstruction ? 'In costruzione' : 'Completato'; ?></span>
-            <?php if ($isUnderConstruction && $endsTs): ?>
-                <span class="construction-timer" data-ends="<?php echo $endsTs; ?>"></span>
-            <?php endif; ?>
-        </p>
+    <?php if ($isUnderConstruction): ?>
+      <!-- Progress bar -->
+      <div class="build-progress <?php echo $variantClass; ?><?php echo $startTs ? '' : ' indeterminate'; ?>"
+           <?php if ($startTs): ?>
+             data-starts="<?php echo $startTs; ?>" data-ends="<?php echo $endsTs; ?>"
+           <?php endif; ?>></div>
 
-        <div class="building-actions">
-            <?php if ($isUnderConstruction): ?>
-                <button class="cancel-build" data-id="<?php echo (int)$building['id']; ?>">Annulla</button>
-                <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>" disabled>Potenzia</button>
-                <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>" disabled>Gestisci</button>
-            <?php else: ?>
-                <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>">Potenzia</button>
-                <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>">Gestisci</button>
-                <button class="demolish-build" data-id="<?php echo (int)$building['id']; ?>">Demolisci</button>
-            <?php endif; ?>
-        </div>
+      <!-- Badge con countdown -->
+      <div class="build-badge <?php echo $variantClass; ?>"
+           title="ETA...">
+        <span class="badge-label">In costruzione<?php echo $isUpgrade ? ' (upgrade)' : ''; ?></span>
+        <span class="construction-timer"
+              data-ends="<?php echo $endsTs; ?>"
+              <?php if ($startTs): ?>data-starts="<?php echo $startTs; ?>"<?php endif; ?>></span>
+      </div>
+    <?php endif; ?>
+
+    <img src="assets/images/buildings/<?php echo strtolower($building['type']); ?>.png"
+         alt="<?php echo htmlspecialchars($building['type']); ?>">
+
+    <h3><?php echo htmlspecialchars($building['type']); ?></h3>
+    <p>Livello: <?php echo (int)$building['level']; ?></p>
+
+    <p>
+      Stato:
+      <span class="status-text"><?php echo $isUnderConstruction ? 'In costruzione' : 'Completato'; ?></span>
+    </p>
+
+    <div class="building-actions">
+      <?php if ($isUnderConstruction): ?>
+        <button class="cancel-build" data-id="<?php echo (int)$building['id']; ?>">Annulla</button>
+        <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>" disabled>Potenzia</button>
+        <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>" disabled>Gestisci</button>
+      <?php else: ?>
+        <button class="upgrade-btn" data-id="<?php echo (int)$building['id']; ?>">Potenzia</button>
+        <button class="manage-btn"  data-id="<?php echo (int)$building['id']; ?>">Gestisci</button>
+        <button class="demolish-build" data-id="<?php echo (int)$building['id']; ?>">Demolisci</button>
+      <?php endif; ?>
     </div>
+  </div>
 <?php endforeach; ?>
 
             </div>
@@ -107,12 +122,9 @@ include_once 'templates/header.php';
                 <button class="build-btn" data-type="farm">Costruisci</button>
             </div>
 
-            <!-- Aggiungi qui altre opzioni di edifici -->
+            <!-- Aggiungi qui altre opzioni -->
         </div>
     </div>
 </div>
 
-<?php
-// Includi il footer (carica automaticamente assets/js/buildings.js come modulo)
-include_once 'templates/footer.php';
-?>
+<?php include_once 'templates/footer.php'; ?>

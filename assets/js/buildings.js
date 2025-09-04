@@ -1,8 +1,8 @@
-// assets/js/buildings.js (ES module, caricato dal footer con ?v=GAME_VERSION)
+// assets/js/buildings.js (ES module)
 
 const API = 'api.php';
 
-let __IH_isSyncing = false; // evita sync paralleli
+let __IH_isSyncing = false;
 let __IH_timerId = null;
 
 /* -------------------- UI helpers -------------------- */
@@ -13,6 +13,61 @@ function notify(type, message) {
     if (type === 'error') console.error(message);
     alert(message);
   }
+}
+
+function fmtDateTime(tsMs) {
+  try {
+    return new Date(tsMs).toLocaleString(); // usa locale del browser
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Nice confirm modal (Promise<boolean>)
+ */
+function confirmNice({
+  title = 'Conferma',
+  message = 'Sei sicuro?',
+  confirmText = 'Conferma',
+  cancelText = 'Annulla',
+  variant = 'primary'
+} = {}) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'ih-modal-backdrop';
+    backdrop.innerHTML = `
+      <div class="ih-modal" role="dialog" aria-modal="true" aria-labelledby="ih-modal-title">
+        <h3 id="ih-modal-title">${title}</h3>
+        <p>${message}</p>
+        <div class="actions">
+          <button class="ih-btn ih-cancel">${cancelText}</button>
+          <button class="ih-btn ih-btn-primary ${variant === 'danger' ? 'ih-btn-danger ih-btn-primary' : ''} ih-ok">${confirmText}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+
+    const btnCancel = backdrop.querySelector('.ih-cancel');
+    const btnOk = backdrop.querySelector('.ih-ok');
+
+    const close = (val) => {
+      document.removeEventListener('keydown', onKey);
+      backdrop.remove();
+      resolve(val);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') close(false);
+      if (e.key === 'Enter')  close(true);
+    };
+
+    btnCancel.addEventListener('click', () => close(false));
+    btnOk.addEventListener('click', () => close(true));
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(false); });
+    document.addEventListener('keydown', onKey);
+
+    btnOk.focus();
+  });
 }
 
 /* -------------------- API helper -------------------- */
@@ -48,7 +103,7 @@ async function apiCall(action, data = null, method = 'GET') {
   }
 }
 
-/* -------------------- Countdown costruzione -------------------- */
+/* -------------------- Countdown costruzione + progress -------------------- */
 function fmtTime(ms) {
   let s = Math.max(0, Math.floor(ms / 1000));
   const d = Math.floor(s / 86400); s %= 86400;
@@ -59,6 +114,8 @@ function fmtTime(ms) {
   return `${m}m ${s}s`;
 }
 
+function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
 function initConstructionTimers() {
   const timers = [...document.querySelectorAll('.construction-timer[data-ends]')];
   if (!timers.length) return;
@@ -67,13 +124,48 @@ function initConstructionTimers() {
     const now = Date.now();
 
     for (const el of timers) {
-      const ends = parseInt(el.dataset.ends, 10) * 1000; // epoch s → ms
-      const remain = ends - now;
+      const endsSec = parseInt(el.dataset.ends, 10);
+      if (!endsSec) continue;
+
+      const endsMs = endsSec * 1000;
+      const remain = endsMs - now;
+
+      // ETA tooltip (sia su badge che sullo span)
+      const badge = el.closest('.build-badge');
+      const etaText = `ETA: ${remain <= 0 ? '0m 0s' : fmtTime(remain)} • Fine: ${fmtDateTime(endsMs)}`;
+      el.title = etaText;
+      el.setAttribute('aria-label', etaText);
+      if (badge) {
+        badge.title = etaText;
+        badge.setAttribute('aria-label', etaText);
+      }
+
+      // Progress bar (se abbiamo anche data-starts)
+      const card = el.closest('.building-card');
+      const bar  = card ? card.querySelector('.build-progress') : null;
+
+      const startsSec = parseInt(el.dataset.starts || (bar && bar.dataset.starts) || '0', 10);
+      const startsMs  = startsSec ? (startsSec * 1000) : 0;
+
+      if (bar) {
+        if (startsMs && endsMs > startsMs) {
+          const total   = endsMs - startsMs;
+          const elapsed = now - startsMs;
+          const pct     = clamp01(elapsed / total) * 100;
+          bar.style.width = `${pct}%`;
+          bar.classList.remove('indeterminate');
+        } else {
+          // senza inizio conosciuto: lascia indeterminate
+          bar.classList.add('indeterminate');
+        }
+      }
 
       if (remain <= 0) {
-        // UI: segna completato localmente
-        el.textContent = ' (0m 0s)';
-        const card = el.closest('.building-card');
+        // Fine countdown
+        el.textContent = '0m 0s';
+        if (badge) badge.remove();
+        if (bar)   bar.remove();
+
         if (card) {
           card.dataset.status = 'completed';
           const st = card.querySelector('.status-text');
@@ -82,7 +174,7 @@ function initConstructionTimers() {
           card.querySelector('.manage-btn')?.removeAttribute('disabled');
         }
 
-        // Richiedi il sync UNA SOLA VOLTA
+        // Sincronizza una sola volta col server
         if (!el.dataset.syncRequested && !__IH_isSyncing) {
           el.dataset.syncRequested = '1';
           __IH_isSyncing = true;
@@ -91,16 +183,13 @@ function initConstructionTimers() {
 
           __IH_isSyncing = false;
 
-          // Ricarica SOLO se il backend ha effettivamente chiuso delle costruzioni
           if (result && Array.isArray(result.completed_buildings) && result.completed_buildings.length > 0) {
             location.reload();
             return;
           }
-          // Se non ha chiuso nulla, NON ricaricare. La UI resta aggiornata localmente
-          // e non ritenteremo il sync finché non si ricarica manualmente.
         }
       } else {
-        el.textContent = ` (${fmtTime(remain)})`;
+        el.textContent = fmtTime(remain);
       }
     }
   };
@@ -111,7 +200,7 @@ function initConstructionTimers() {
 
 /* -------------------- Init pagina Edifici -------------------- */
 function initBuildingsPage() {
-  // Click su "Costruisci"
+  // Costruisci nuova struttura
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('.build-btn');
     if (!btn) return;
@@ -127,39 +216,46 @@ function initBuildingsPage() {
 
     if (result) {
       notify('success', 'Costruzione avviata!');
-      location.reload(); // una sola ricarica qui va bene
+      location.reload();
     } else {
       btn.disabled = false;
       btn.textContent = original;
     }
   });
-    // Click su "Annulla" (cancella una costruzione in corso)
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('.cancel-build');
-  if (!btn) return;
 
-  const id = parseInt(btn.dataset.id, 10);
-  if (!id) return;
+  // Annulla costruzione in corso
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.cancel-build');
+    if (!btn) return;
 
-  if (!confirm('Annullare questa costruzione? I materiali non verranno rimborsati.')) {
-    return;
-  }
+    const id = parseInt(btn.dataset.id, 10);
+    if (!id) return;
 
-  const original = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Annullamento...';
+    const ok = await confirmNice({
+      title: 'Annulla costruzione',
+      message: 'Annullare questa costruzione? I materiali non verranno rimborsati.',
+      confirmText: 'Annulla costruzione',
+      cancelText: 'No',
+      variant: 'danger'
+    });
+    if (!ok) return;
 
-  const result = await apiCall('cancel_construction', { building_id: id }, 'POST');
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Annullamento...';
 
-  if (result) {
-    notify('success', 'Costruzione annullata');
-    location.reload();
-  } else {
-    btn.disabled = false;
-    btn.textContent = original;
-  }
-});
-  // Click su "Demolisci" (rimuove un edificio completato)
+    const result = await apiCall('cancel_construction', { building_id: id }, 'POST');
+
+    if (result) {
+      notify('success', 'Costruzione annullata');
+      location.reload();
+    } else {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+
+  // Demolisci edificio completato
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('.demolish-build');
     if (!btn) return;
@@ -167,9 +263,14 @@ document.addEventListener('click', async (e) => {
     const id = parseInt(btn.dataset.id, 10);
     if (!id) return;
 
-    if (!confirm('Demolire questo edificio? Operazione permanente (nessun rimborso).')) {
-      return;
-    }
+    const ok = await confirmNice({
+      title: 'Demolisci edificio',
+      message: 'Demolire questo edificio? Operazione permanente (nessun rimborso).',
+      confirmText: 'Demolisci',
+      cancelText: 'Annulla',
+      variant: 'danger'
+    });
+    if (!ok) return;
 
     const original = btn.textContent;
     btn.disabled = true;
@@ -186,7 +287,7 @@ document.addEventListener('click', async (e) => {
     }
   });
 
-  // Avvia countdown per le card "In costruzione"
+  // Countdown + progress
   initConstructionTimers();
 
   console.log('Inizializzazione funzioni edifici di base');
