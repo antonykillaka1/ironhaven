@@ -120,6 +120,16 @@ function initConstructionTimers() {
   const timers = [...document.querySelectorAll('.construction-timer[data-ends]')];
   if (!timers.length) return;
 
+  // helper per configurare la ring (una volta per elemento)
+  function setupRing(ringProgress) {
+    const r = parseFloat(ringProgress.getAttribute('r')) || 46;
+    const C = 2 * Math.PI * r;
+    ringProgress.dataset.circ = String(C);
+    ringProgress.style.strokeDasharray = `${C} ${C}`;
+    // start da 0% (offset pieno)
+    ringProgress.style.strokeDashoffset = `${C}`;
+  }
+
   const update = async () => {
     const now = Date.now();
 
@@ -130,41 +140,62 @@ function initConstructionTimers() {
       const endsMs = endsSec * 1000;
       const remain = endsMs - now;
 
-      // ETA tooltip (sia su badge che sullo span)
-      const badge = el.closest('.build-badge');
+      // elementi correlati
+      const card   = el.closest('.building-card');
+      const badge  = el.closest('.build-badge');
+      const thumb  = card ? card.querySelector('.building-thumb.in-progress') : null;
+      const bar    = card ? card.querySelector('.build-progress') : null;
+      const ringPr = thumb ? thumb.querySelector('.build-ring-progress') : null;
+
+      const startsSec = parseInt(
+        el.dataset.starts ||
+        (thumb && thumb.dataset.starts) ||
+        (bar && bar.dataset.starts) || '0', 10
+      );
+      const startsMs = startsSec ? (startsSec * 1000) : 0;
+
+      // ETA tooltip
       const etaText = `ETA: ${remain <= 0 ? '0m 0s' : fmtTime(remain)} • Fine: ${fmtDateTime(endsMs)}`;
-      el.title = etaText;
-      el.setAttribute('aria-label', etaText);
-      if (badge) {
-        badge.title = etaText;
-        badge.setAttribute('aria-label', etaText);
-      }
+      el.title = etaText; el.setAttribute('aria-label', etaText);
+      if (badge) { badge.title = etaText; badge.setAttribute('aria-label', etaText); }
 
-      // Progress bar (se abbiamo anche data-starts)
-      const card = el.closest('.building-card');
-      const bar  = card ? card.querySelector('.build-progress') : null;
-
-      const startsSec = parseInt(el.dataset.starts || (bar && bar.dataset.starts) || '0', 10);
-      const startsMs  = startsSec ? (startsSec * 1000) : 0;
-
+      // Progress bar lineare (se sappiamo lo start)
       if (bar) {
         if (startsMs && endsMs > startsMs) {
-          const total   = endsMs - startsMs;
+          const total = endsMs - startsMs;
           const elapsed = now - startsMs;
-          const pct     = clamp01(elapsed / total) * 100;
+          const pct = clamp01(elapsed / total) * 100;
           bar.style.width = `${pct}%`;
           bar.classList.remove('indeterminate');
         } else {
-          // senza inizio conosciuto: lascia indeterminate
           bar.classList.add('indeterminate');
         }
       }
 
+      // Progress ring circolare
+      if (ringPr) {
+        if (!ringPr.dataset.circ) setupRing(ringPr);
+        const C = parseFloat(ringPr.dataset.circ);
+
+        if (startsMs && endsMs > startsMs) {
+          const total = endsMs - startsMs;
+          const elapsed = Math.max(0, Math.min(total, now - startsMs));
+          const pct = elapsed / total; // 0..1
+          const offset = C * (1 - pct);
+          ringPr.style.strokeDashoffset = `${offset}`;
+          thumb && thumb.classList.remove('indeterminate');
+        } else {
+          // indeterminate: lascia la rotazione CSS
+          thumb && thumb.classList.add('indeterminate');
+        }
+      }
+
+      // Fine countdown
       if (remain <= 0) {
-        // Fine countdown
         el.textContent = '0m 0s';
         if (badge) badge.remove();
         if (bar)   bar.remove();
+        if (thumb) thumb.classList.remove('in-progress', 'indeterminate');
 
         if (card) {
           card.dataset.status = 'completed';
@@ -174,13 +205,11 @@ function initConstructionTimers() {
           card.querySelector('.manage-btn')?.removeAttribute('disabled');
         }
 
-        // Sincronizza una sola volta col server
+        // sincronizza una sola volta col server
         if (!el.dataset.syncRequested && !__IH_isSyncing) {
           el.dataset.syncRequested = '1';
           __IH_isSyncing = true;
-
           const result = await apiCall('check_construction_status', null, 'POST');
-
           __IH_isSyncing = false;
 
           if (result && Array.isArray(result.completed_buildings) && result.completed_buildings.length > 0) {
@@ -197,6 +226,7 @@ function initConstructionTimers() {
   update();
   __IH_timerId = setInterval(update, 1000);
 }
+
 
 /* -------------------- Init pagina Edifici -------------------- */
 function initBuildingsPage() {

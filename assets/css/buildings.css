@@ -725,3 +725,42 @@ main {
   0%   { background-position: -180px 0, 0 0; }
   100% { background-position: 100% 0, 0 0; }
 }
+/* === Progress Ring attorno all'icona edificio === */
+.building-thumb {
+  position: relative;
+  width: 96px; height: 96px;
+  margin: 0 auto 8px auto;
+  display: grid; place-items: center;
+}
+.building-thumb img {
+  width: 88px; height: 88px; object-fit: contain;
+  position: relative; z-index: 1;
+}
+
+/* SVG ring */
+.build-ring {
+  position: absolute; inset: 0;
+  width: 96px; height: 96px;
+  transform: rotate(-90deg); /* inizio dall'alto */
+  z-index: 0; pointer-events: none;
+}
+.build-ring circle { fill: none; }
+.build-ring-track {
+  stroke: #eee; stroke-width: 6;
+}
+.build-ring-progress {
+  stroke: #f59e0b; /* default: nuova costruzione (arancio) */
+  stroke-width: 6; stroke-linecap: round;
+  transition: stroke-dashoffset .25s ease;
+}
+
+/* Varianti colore */
+.building-thumb.upgrade .build-ring-progress { stroke: #16a34a; } /* verde upgrade */
+
+/* Indeterminate (se non conosciamo data di inizio) → rotazione continua */
+.building-thumb.indeterminate .build-ring {
+  animation: ihSpin 1.2s linear infinite;
+}
+@keyframes ihSpin {
+  to { transform: rotate(270deg); }
+}
