@@ -316,9 +316,116 @@ function initBuildingsPage() {
       btn.textContent = original;
     }
   });
+  function fmtResKey(k) {
+  const map = { wood: 'Legno', stone: 'Pietra', food: 'Cibo', water: 'Acqua', iron: 'Ferro', gold: 'Oro' };
+  return map[k] || k;
+}
+function fmtNum(n) {
+  if (n == null) return 'N/D';
+  return Number(n).toLocaleString('it-IT');
+}
+function fmtTimeHMS(sec) {
+  if (!sec && sec !== 0) return 'N/D';
+  let s = Math.max(0, parseInt(sec, 10));
+  const h = Math.floor(s / 3600); s %= 3600;
+  const m = Math.floor(s / 60);   s %= 60;
+  if (h > 0) return `${h}h ${m}m ${s}s`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function renderResList(obj, suffix = '') {
+  if (!obj || Object.keys(obj).length === 0) {
+    return '<div class="muted">N/D</div>';
+  }
+  return `
+    <ul class="ih-list">
+      ${Object.entries(obj).map(([k,v]) => `
+        <li>
+          <img src="assets/images/resources/${k}.png" alt="${fmtResKey(k)}">
+          <span>${fmtResKey(k)}</span>
+          <strong>${fmtNum(v)}${suffix}</strong>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+function openDetailsModal(details) {
+  const html = `
+    <div class="ih-modal-backdrop">
+      <div class="ih-modal ih-details" role="dialog" aria-modal="true" aria-labelledby="ih-details-title">
+        <h3 id="ih-details-title">
+          Dettagli: ${details.type} — Livello ${details.level}
+        </h3>
+
+        <div class="ih-sections">
+          <section>
+            <h4>Produzione attuale</h4>
+            ${renderResList(details.production, '/h')}
+          </section>
+
+          <section>
+            <h4>Produzione al prossimo livello</h4>
+            ${renderResList(details.next_level_production, '/h')}
+          </section>
+
+          <section>
+            <h4>Capienza</h4>
+            <div>${details.capacity != null ? fmtNum(details.capacity) : 'N/D'}</div>
+          </section>
+
+          <section>
+            <h4>Costi upgrade</h4>
+            ${renderResList(details.upgrade_costs)}
+            <div class="muted">Tempo upgrade: ${fmtTimeHMS(details.build_time_sec)}</div>
+          </section>
+        </div>
+
+        <div class="actions">
+          <button class="ih-btn ih-btn-primary ih-close">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  `;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html.trim();
+  const backdrop = wrapper.firstElementChild;
+  document.body.appendChild(backdrop);
+
+  const close = () => backdrop.remove();
+  backdrop.querySelector('.ih-close').addEventListener('click', close);
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+  document.addEventListener('keydown', function onKey(e){
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+  });
+}
+
+  
 
   // Countdown + progress
   initConstructionTimers();
+    // Apri Dettagli (usa il bottone "Gestisci" come trigger)
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.manage-btn, .details-btn');
+    if (!btn) return;
+
+    const id = parseInt(btn.dataset.id, 10);
+    if (!id) return;
+
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Caricamento...';
+
+    const res = await apiCall('building_details', { building_id: id }, 'POST');
+
+    btn.disabled = false;
+    btn.textContent = original;
+
+    if (!res) return;
+    openDetailsModal(res.details);
+  });
+
 
   console.log('Inizializzazione funzioni edifici di base');
 }

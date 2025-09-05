@@ -702,6 +702,294 @@ switch ($action) {
             apiError('Demolizione fallita');
         }
         break;
+		    case 'building_details':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            apiError('Metodo non consentito', 405);
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $buildingId = isset($data['building_id']) ? (int)$data['building_id'] : 0;
+        if ($buildingId <= 0) {
+            apiError('ID edificio mancante', 400);
+        }
+
+        $playerId = $auth->getUserId();
+        $db = Database::getInstance();
+
+        // Carica edificio e verifica appartenenza
+        $building = $db->fetch(
+            "SELECT b.* 
+               FROM buildings b
+               JOIN settlements s ON s.id = b.settlement_id
+              WHERE b.id = ? AND s.player_id = ?",
+            [$buildingId, $playerId]
+        );
+
+        if (!$building) {
+            apiError('Edificio non trovato', 404);
+        }
+
+        // Determina classe edificio
+        $type = $building['type'];
+        $className = str_replace('_', '', ucwords($type, '_'));
+        $fullClassName = 'Ironhaven\\Buildings\\' . $className;
+
+        $details = [
+            'type'        => $type,
+            'level'       => (int)$building['level'],
+            'production'  => [],
+            'next_level_production' => [],
+            'capacity'    => null,
+            'upgrade_costs' => null,
+            'build_time_sec' => null
+        ];
+
+        if (class_exists($fullClassName)) {
+            $instance = new $fullClassName($building);
+
+            // produzione attuale e del prossimo livello, se disponibile
+            if (method_exists($instance, 'getProduction')) {
+                $details['production'] = (array)$instance->getProduction((int)$building['level']);
+                $details['next_level_production'] = (array)$instance->getProduction((int)$building['level'] + 1);
+            }
+
+            // capienza (prova metodi comuni)
+            foreach (['getCapacity','getPopulation','getStorageCapacity'] as $m) {
+                if (method_exists($instance, $m)) {
+                    $details['capacity'] = $instance->$m((int)$building['level']);
+                    break;
+                }
+            }
+
+            // costi upgrade (prova metodi comuni)
+            foreach (['getUpgradeCost','getUpgradeCosts','getConstructionCost','getConstructionCosts'] as $m) {
+                if (method_exists($instance, $m)) {
+                    $details['upgrade_costs'] = $instance->$m((int)$building['level'] + 1);
+                    break;
+                }
+            }
+
+            // tempo costruzione/upgrade se disponibile
+            foreach (['getConstructionTime','getBuildTime'] as $m) {
+                if (method_exists($instance, $m)) {
+                    $details['build_time_sec'] = (int)$instance->$m((int)$building['level'] + 1);
+                    break;
+                }
+            }
+        }
+
+        echo json_encode(['success' => true, 'details' => $details]);
+        break;
+		case 'buildings_catalog':
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        apiError('Metodo non consentito', 405);
+    }
+
+    $db = Database::getInstance();
+
+    // Prendi tutti i tipi definiti
+    try {
+        $types = $db->fetchAll("SELECT * FROM building_types ORDER BY name ASC");
+    } catch (\Throwable $e) {
+        apiError('Tabella building_types non trovata. Importa i dati prima.', 500);
+    }
+
+    $geo = function($base, $mult, $level) {
+        $base = (float)$base; $mult = (float)$mult; $level = (int)$level;
+        if ($level <= 1) return $base;
+        return $base * pow($mult, $level - 1);
+    };
+
+    $out = [];
+    foreach ($types as $t) {
+        $max = max(1, (int)$t['max_level']);
+
+        $entry = [
+            'type' => $t['slug'],
+            'display' => $t['name'],
+            'max_level' => $max,
+            'levels' => []
+        ];
+
+        $cm = (float)($t['upgrade_cost_multiplier'] ?? 1.5);
+        $pm = (float)($t['production_multiplier'] ?? 1.2);
+        $capm= (float)($t['capacity_multiplier'] ?? 1.2);
+        $tm = (float)($t['time_multiplier'] ?? 1.0);
+
+        $base_time_min = (int)($t['build_time_minutes'] ?? 5);
+
+        $cumSec = 0;
+        for ($lvl = 1; $lvl <= $max; $lvl++) {
+            // costi per raggiungere QUESTO livello
+            $costs = [
+                'water' => (int)round($geo($t['water_cost'], $cm, $lvl)),
+                'food'  => (int)round($geo($t['food_cost'],  $cm, $lvl)),
+                'wood'  => (int)round($geo($t['wood_cost'],  $cm, $lvl)),
+                'stone' => (int)round($geo($t['stone_cost'], $cm, $lvl)),
+                'iron'  => (int)round($geo($t['iron_cost'],  $cm, $lvl)),
+                'gold'  => (int)round($geo($t['gold_cost'],  $cm, $lvl)),
+            ];
+
+            // produzione oraria a livello L
+            $prod = [
+                'water' => (int)round($geo($t['water_production'], $pm, $lvl)),
+                'food'  => (int)round($geo($t['food_production'],  $pm, $lvl)),
+                'wood'  => (int)round($geo($t['wood_production'],  $pm, $lvl)),
+                'stone' => (int)round($geo($t['stone_production'], $pm, $lvl)),
+                'iron'  => (int)round($geo($t['iron_production'],  $pm, $lvl)),
+                'gold'  => (int)round($geo($t['gold_production'],  $pm, $lvl)),
+            ];
+
+            // capienza (numero generico; opzionalmente puoi usare capacity_resource)
+            $capacity = (int)round($geo($t['capacity_increase'], $capm, $lvl));
+
+            // tempo per QUESTO livello
+            $time_sec = (int)round($geo($base_time_min, $tm, $lvl)) * 60;
+            $cumSec += $time_sec;
+
+            // pulizia: elimina chiavi a zero per snellire
+            $prod = array_filter($prod, fn($v)=>$v>0);
+            $costs = array_filter($costs, fn($v)=>$v>0);
+
+            $entry['levels'][] = [
+                'level' => $lvl,
+                'costs' => $costs,
+                'time_sec' => $time_sec,
+                'time_cum_sec' => $cumSec,
+                'production' => $prod,
+                'capacity' => $capacity
+            ];
+        }
+
+        $out[] = $entry;
+    }
+
+    echo json_encode(['success' => true, 'buildings' => $out]);
+    break;
+	    // =========================
+    //  TECH-TREE / BUILDING_TYPES
+    // =========================
+    case 'get_building_types':
+        // elenco compatto per lista
+        $rows = $db->fetchAll("SELECT 
+            id, slug, name, description, max_level, image_url,
+            level_required,
+            water_production, food_production, wood_production, stone_production, iron_production, gold_production,
+            capacity_increase, capacity_resource,
+            water_cost, food_cost, wood_cost, stone_cost, iron_cost, gold_cost,
+            upgrade_cost_multiplier, production_multiplier, capacity_multiplier, time_multiplier,
+            build_time_minutes
+        FROM building_types ORDER BY name ASC");
+        echo json_encode(['success' => true, 'items' => $rows]);
+        break;
+
+    case 'get_building_type':
+        $slug = $_GET['slug'] ?? '';
+        $id   = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if (!$slug && !$id) apiError('Parametro mancante (slug o id).', 400);
+
+        if ($slug) {
+            $row = $db->fetch("SELECT * FROM building_types WHERE slug = ?", [$slug]);
+        } else {
+            $row = $db->fetch("SELECT * FROM building_types WHERE id = ?", [$id]);
+        }
+        if (!$row) apiError('Struttura non trovata', 404);
+
+        echo json_encode(['success' => true, 'item' => $row]);
+        break;
+
+    case 'export_building_types_csv':
+        verifyAdmin(); // opzionale: togli se vuoi permettere export a tutti
+        $rows = $db->fetchAll("SELECT * FROM building_types ORDER BY name ASC");
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=building_types.csv');
+        $out = fopen('php://output', 'w');
+        // intestazioni compatibili con l’import
+        fputcsv($out, [
+            'slug','name','description','level_required',
+            'water_production','food_production','wood_production','stone_production','iron_production','gold_production',
+            'capacity_increase','capacity_resource',
+            'water_cost','food_cost','wood_cost','stone_cost','iron_cost','gold_cost',
+            'upgrade_cost_multiplier','production_multiplier','capacity_multiplier','time_multiplier',
+            'build_time_minutes','max_level','image_url','xp_per_building'
+        ]);
+        foreach ($rows as $r) {
+            fputcsv($out, [
+                $r['slug'],$r['name'],$r['description'],$r['level_required'],
+                $r['water_production'],$r['food_production'],$r['wood_production'],$r['stone_production'],$r['iron_production'],$r['gold_production'],
+                $r['capacity_increase'],$r['capacity_resource'],
+                $r['water_cost'],$r['food_cost'],$r['wood_cost'],$r['stone_cost'],$r['iron_cost'],$r['gold_cost'],
+                $r['upgrade_cost_multiplier'],$r['production_multiplier'],$r['capacity_multiplier'],$r['time_multiplier'],
+                $r['build_time_minutes'],$r['max_level'],$r['image_url'],$r['xp_per_building']
+            ]);
+        }
+        fclose($out);
+        exit;
+
+    case 'export_building_type_csv':
+        verifyAdmin(); // opzionale
+        $slug = $_GET['slug'] ?? '';
+        $id   = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if (!$slug && !$id) apiError('Parametro mancante (slug o id).', 400);
+        $row = $slug
+            ? $db->fetch("SELECT * FROM building_types WHERE slug = ?", [$slug])
+            : $db->fetch("SELECT * FROM building_types WHERE id = ?", [$id]);
+        if (!$row) apiError('Struttura non trovata', 404);
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=building_type_'.$row['slug'].'.csv');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, [
+            'slug','name','description','level_required',
+            'water_production','food_production','wood_production','stone_production','iron_production','gold_production',
+            'capacity_increase','capacity_resource',
+            'water_cost','food_cost','wood_cost','stone_cost','iron_cost','gold_cost',
+            'upgrade_cost_multiplier','production_multiplier','capacity_multiplier','time_multiplier',
+            'build_time_minutes','max_level','image_url','xp_per_building'
+        ]);
+        fputcsv($out, [
+            $row['slug'],$row['name'],$row['description'],$row['level_required'],
+            $row['water_production'],$row['food_production'],$row['wood_production'],$row['stone_production'],$row['iron_production'],$row['gold_production'],
+            $row['capacity_increase'],$row['capacity_resource'],
+            $row['water_cost'],$row['food_cost'],$row['wood_cost'],$row['stone_cost'],$row['iron_cost'],$row['gold_cost'],
+            $row['upgrade_cost_multiplier'],$row['production_multiplier'],$row['capacity_multiplier'],$row['time_multiplier'],
+            $row['build_time_minutes'],$row['max_level'],$row['image_url'],$row['xp_per_building']
+        ]);
+        fclose($out);
+        exit;
+
+    case 'update_building_type':
+        verifyAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') apiError('Metodo non consentito', 405);
+        $data = json_decode(file_get_contents('php://input'), true) ?: [];
+        $slug = $data['slug'] ?? '';
+        $id   = isset($data['id']) ? (int)$data['id'] : 0;
+        if (!$slug && !$id) apiError('Parametro mancante (slug o id).', 400);
+
+        $fields = [
+            'description','max_level','upgrade_cost_multiplier','production_multiplier',
+            'capacity_multiplier','time_multiplier','image_url'
+        ];
+        $updates = [];
+        $params  = [];
+        foreach ($fields as $f) {
+            if (array_key_exists($f, $data)) {
+                $updates[] = "$f = ?";
+                $params[]  = $data[$f];
+            }
+        }
+        if (!$updates) apiError('Nessun campo da aggiornare.', 400);
+
+        if ($slug) { $where = 'slug = ?'; $params[] = $slug; }
+        else       { $where = 'id = ?';   $params[] = $id;   }
+
+        $sql = "UPDATE building_types SET ".implode(', ', $updates)." WHERE $where";
+        $db->query($sql, $params);
+        echo json_encode(['success' => true]);
+        break;
+
+
+
 	
     default:
         apiError('Azione non riconosciuta');

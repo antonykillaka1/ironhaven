@@ -40,8 +40,10 @@
                 <li><a href="index.php?page=buildings">Edifici</a></li>
                 <li><a href="index.php?page=missions">Missioni</a></li>
                 <li><a href="index.php?page=profile">Profilo</a></li>
+				<li><a href="index.php?page=tech_tree">Strutture</a></li>
                 <?php if (isset($currentUser['is_admin']) && $currentUser['is_admin'] == 1): ?>
                 <li><a href="index.php?page=admin">Admin</a></li>
+				<li><a href="index.php?page=admin_building_types">Import Strutture</a></li>
                 <?php endif; ?>
                 <li><a href="logout.php">Logout</a></li>
             </ul>

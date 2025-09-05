@@ -764,3 +764,51 @@ main {
 @keyframes ihSpin {
   to { transform: rotate(270deg); }
 }
+/* Modal dettagli edificio */
+.ih-modal.ih-details {
+  max-width: 720px;
+}
+.ih-details .ih-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.ih-details section h4 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: #6b4b2a;
+}
+.ih-list {
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.ih-list li {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #eee;
+}
+.ih-list li:last-child { border-bottom: 0; }
+.ih-list img { width: 22px; height: 22px; object-fit: contain; }
+.muted { color: #888; font-size: .9rem; }
+
+/* backdrop/modal base (se già presenti, ignora) */
+.ih-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  display: grid; place-items: center;
+  z-index: 9999;
+}
+.ih-modal {
+  background: #fff; border-radius: 12px;
+  padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  max-width: 560px; width: 92%;
+}
+.ih-modal .actions {
+  display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;
+}
+.ih-btn { padding: 8px 12px; border-radius: 10px; border: 1px solid #cdb59f; background: #fff; cursor: pointer; }
+.ih-btn-primary { background: #8b5927; color: #fff; border-color: #8b5927; }
