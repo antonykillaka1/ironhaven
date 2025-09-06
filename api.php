@@ -624,6 +624,59 @@ switch ($action) {
         apiOk(['success' => true]);
     }
 
+    /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+       NUOVO: DUPLICA STRUTTURA (solo admin)
+       >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+    case 'duplicate_building_type': {
+        verifyAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') apiError('Metodo non consentito', 405);
+
+        $payload   = json_decode(file_get_contents('php://input'), true) ?: [];
+        $sourceSlug = $payload['source_slug'] ?? '';
+        $newName    = trim($payload['new_name'] ?? '');
+        $newSlug    = trim($payload['new_slug'] ?? '');
+
+        if ($sourceSlug === '' || $newName === '' || $newSlug === '') {
+            apiError('Parametri mancanti', 400);
+        }
+        if (!preg_match('/^[a-z0-9\-]+$/', $newSlug)) {
+            apiError('Slug non valido (solo minuscole, numeri e trattini).', 400);
+        }
+
+        // sorgente esiste?
+        $src = $db->fetch("SELECT * FROM building_types WHERE slug = ?", [$sourceSlug]);
+        if (!$src) apiError('Struttura di origine non trovata', 404);
+
+        // slug nuovo libero?
+        $exists = $db->fetch("SELECT id FROM building_types WHERE slug = ?", [$newSlug]);
+        if ($exists) apiError('Slug già in uso', 409);
+
+        // campi da copiare
+        $copyFields = [
+            'description','level_required',
+            'water_production','food_production','wood_production','stone_production','iron_production','gold_production',
+            'capacity_increase','capacity_resource',
+            'water_cost','food_cost','wood_cost','stone_cost','iron_cost','gold_cost',
+            'upgrade_cost_multiplier','production_multiplier','capacity_multiplier','time_multiplier',
+            'build_time_minutes','max_level','image_url','xp_per_building'
+        ];
+
+        $row = [
+            'slug' => $newSlug,
+            'name' => $newName,
+        ];
+        foreach ($copyFields as $f) {
+            $row[$f] = $src[$f] ?? null;
+        }
+
+        try {
+            $newId = $db->insert('building_types', $row);
+            apiOk(['success' => true, 'id' => $newId]);
+        } catch (\Throwable $e) {
+            apiError('Errore durante la duplicazione: '.$e->getMessage(), 500);
+        }
+    }
+
     /* ============ DEFAULT ============ */
     default:
         apiError('Azione non riconosciuta', 404);

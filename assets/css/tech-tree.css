@@ -101,3 +101,26 @@
 .tt-skeleton { padding:18px; color:#9b8f83; }
 
 .tt-inline { display:flex; gap:6px; align-items:center; font-size:13px; color:#6f6459; }
+.tt-select { margin-left: 8px; }
+/* anteprima nella lista */
+.tt-row .tt-icon{
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+/* titolo/modale: 250x250 come richiesto */
+.tt-modal .tt-icon{
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(0,0,0,.08);
+}
+
+/* allinea l’anteprima a sinistra del testo nella riga */
+.tt-row .tt-row-main{ display:flex; align-items:center; gap:12px; }
